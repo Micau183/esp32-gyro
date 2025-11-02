@@ -112,17 +112,17 @@ BLYNK_WRITE(V1) { // Bouton sur le Virtual Pin V1
 void small_blink(){
 
   digitalWrite(relayPin, HIGH);
-  delay(25);
+  delay(250);
   digitalWrite(relayPin, LOW);
-  delay(25);
+  delay(250);
 
 }
 void big_blink(){
 
   digitalWrite(relayPin, HIGH);
-  delay(100);
+  delay(500);
   digitalWrite(relayPin, LOW);
-  delay(100);
+  delay(500);
 
 }
 
@@ -132,7 +132,8 @@ void setup() {
   digitalWrite(relayPin, LOW);
   Serial.begin(9600);
   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
-  small_blink();
+  Blynk.virtualWrite(OTA_BUTTON, 0);
+  big_blink();
 }
 
 void loop() {
@@ -162,6 +163,7 @@ void checkForUpdate() {
   switch(ret) {
     case HTTP_UPDATE_OK:
       big_blink();
+      big_blink();
       
       Serial.println("Update successful! ESP will reboot.");
       break;
@@ -178,3 +180,4 @@ void checkForUpdate() {
       break;
   }
 }
+
