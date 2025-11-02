@@ -109,7 +109,14 @@ BLYNK_WRITE(V1) { // Bouton sur le Virtual Pin V1
     Blynk.virtualWrite(V1, 0);
   }
 }
+void small_blink(){
 
+  digitalWrite(relayPin, HIGH);
+  delay(25);
+  digitalWrite(relayPin, LOW);
+  delay(25);
+
+}
 
 
 void setup() {
@@ -129,46 +136,35 @@ BLYNK_WRITE(OTA_BUTTON) {
   int pinValue = param.asInt();
   if(pinValue == 1) { // bouton appuyé
     Serial.println("OTA triggered from Blynk!");
+    small_blink();
     checkForUpdate();
   }
 }
 
 void checkForUpdate() {
-  HTTPClient http;
-  http.begin(version_url); // version_url aussi doit commencer par https://
-  int httpCode = http.GET();
+  Serial.println("Starting OTA update...");
+  small_blink();
+  // WiFiClientSecure pour HTTPS
+  WiFiClientSecure client;
+  client.setInsecure(); // ok pour GitHub Pages, pas de vérification SSL stricte
 
-  if(httpCode == 200) {
-    String newVersion = http.getString();
-    newVersion.trim();
+  t_httpUpdate_return ret = httpUpdate.update(client, firmware_url);
 
-    if(newVersion != currentVersion) {
-      Serial.println("New firmware available! Updating...");
-
-      // WiFiClientSecure pour HTTPS
-      WiFiClientSecure client;
-      client.setInsecure(); // ok pour GitHub Pages, pas de vérif SSL stricte
-
-      t_httpUpdate_return ret = httpUpdate.update(client, firmware_url);
-
-      switch(ret) {
-        case HTTP_UPDATE_OK:
-          Serial.println("Update successful! ESP will reboot.");
-          break;
-        case HTTP_UPDATE_FAILED:
-          Serial.printf("Update failed (%d): %s\n",
-                        httpUpdate.getLastError(),
-                        httpUpdate.getLastErrorString().c_str());
-          break;
-        case HTTP_UPDATE_NO_UPDATES:
-          Serial.println("No update available.");
-          break;
-      }
-    } else {
-      Serial.println("Firmware is up-to-date.");
-    }
-  } else {
-    Serial.println("Failed to fetch version info.");
+  switch(ret) {
+    case HTTP_UPDATE_OK:
+      
+      Serial.println("Update successful! ESP will reboot.");
+      break;
+    case HTTP_UPDATE_FAILED:
+      small_blink();
+      small_blink();
+      small_blink();
+      Serial.printf("Update failed (%d): %s\n",
+                    httpUpdate.getLastError(),
+                    httpUpdate.getLastErrorString().c_str());
+      break;
+    case HTTP_UPDATE_NO_UPDATES:
+      Serial.println("No update performed.");
+      break;
   }
-  http.end();
 }
