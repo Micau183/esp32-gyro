@@ -117,7 +117,14 @@ void small_blink(){
   delay(25);
 
 }
+void big_blink(){
 
+  digitalWrite(relayPin, HIGH);
+  delay(100);
+  digitalWrite(relayPin, LOW);
+  delay(100);
+
+}
 
 void setup() {
   pinMode(buzzerPin, OUTPUT);
@@ -125,6 +132,7 @@ void setup() {
   digitalWrite(relayPin, LOW);
   Serial.begin(9600);
   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+  small_blink();
 }
 
 void loop() {
@@ -138,6 +146,7 @@ BLYNK_WRITE(OTA_BUTTON) {
     Serial.println("OTA triggered from Blynk!");
     small_blink();
     checkForUpdate();
+    Blynk.virtualWrite(OTA_BUTTON, 0);
   }
 }
 
@@ -152,6 +161,7 @@ void checkForUpdate() {
 
   switch(ret) {
     case HTTP_UPDATE_OK:
+      big_blink();
       
       Serial.println("Update successful! ESP will reboot.");
       break;
