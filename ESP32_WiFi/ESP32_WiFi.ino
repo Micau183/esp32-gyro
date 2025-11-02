@@ -34,15 +34,30 @@
 #define BLYNK_AUTH_TOKEN "Rksk7itSJdxVW9m9vmaHtAgv49j_DygK"
 #define BLYNK_TEMPLATE_ID "TMPL57cB3JhFw"
 
-
+#include <HTTPClient.h>
+#include <HTTPUpdate.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
+#include <WiFiClientSecure.h>
 #include <BlynkSimpleEsp32.h>
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
 char ssid[] = "Freebox-6D4814";
 char pass[] = "felicula.!-conbina7!-vestigant?-opposui";
+
+
+const char* firmware_url = "https://micau183.github.io/esp32-gyro/ESP32_WiFi/build/esp32.esp32.esp32c3/ESP32_WiFi.ino.bin";
+
+const char* version_url  = "https://micau183.github.io/esp32-gyro/ESP32_WiFi/version.txt";
+
+String currentVersion = "1.0";
+
+// --- BLYNK PIN pour le bouton ---
+#define OTA_BUTTON V2  // bouton dans l'app Blynk
+
+BlynkTimer timer;
+
 
 // Broche du buzzer
 const int buzzerPin = 1;
@@ -51,7 +66,7 @@ const int relayPin = 8;
 
 // Tonalités et durée
 const int tone1 = 1000;      // Hz
-const int tone2 = 1500;      // Hz
+const int tone2 = 1900;      // Hz
 const int toneDuration = 150; // ms
 
 BLYNK_WRITE(V1) { // Bouton sur le Virtual Pin V1
@@ -95,6 +110,8 @@ BLYNK_WRITE(V1) { // Bouton sur le Virtual Pin V1
   }
 }
 
+
+
 void setup() {
   pinMode(buzzerPin, OUTPUT);
   pinMode(relayPin, OUTPUT);
@@ -105,4 +122,53 @@ void setup() {
 
 void loop() {
   Blynk.run();
+}
+
+// --- Fonction déclenchée par le bouton Blynk ---
+BLYNK_WRITE(OTA_BUTTON) {
+  int pinValue = param.asInt();
+  if(pinValue == 1) { // bouton appuyé
+    Serial.println("OTA triggered from Blynk!");
+    checkForUpdate();
+  }
+}
+
+void checkForUpdate() {
+  HTTPClient http;
+  http.begin(version_url); // version_url aussi doit commencer par https://
+  int httpCode = http.GET();
+
+  if(httpCode == 200) {
+    String newVersion = http.getString();
+    newVersion.trim();
+
+    if(newVersion != currentVersion) {
+      Serial.println("New firmware available! Updating...");
+
+      // WiFiClientSecure pour HTTPS
+      WiFiClientSecure client;
+      client.setInsecure(); // ok pour GitHub Pages, pas de vérif SSL stricte
+
+      t_httpUpdate_return ret = httpUpdate.update(client, firmware_url);
+
+      switch(ret) {
+        case HTTP_UPDATE_OK:
+          Serial.println("Update successful! ESP will reboot.");
+          break;
+        case HTTP_UPDATE_FAILED:
+          Serial.printf("Update failed (%d): %s\n",
+                        httpUpdate.getLastError(),
+                        httpUpdate.getLastErrorString().c_str());
+          break;
+        case HTTP_UPDATE_NO_UPDATES:
+          Serial.println("No update available.");
+          break;
+      }
+    } else {
+      Serial.println("Firmware is up-to-date.");
+    }
+  } else {
+    Serial.println("Failed to fetch version info.");
+  }
+  http.end();
 }
