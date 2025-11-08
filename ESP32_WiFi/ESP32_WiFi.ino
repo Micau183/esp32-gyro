@@ -47,7 +47,7 @@ char ssid[] = "Freebox-6D4814";
 char pass[] = "felicula.!-conbina7!-vestigant?-opposui";
 
 
-const char* firmware_url = "https://micau183.github.io/esp32-gyro/ESP32_WiFi/build/esp32.esp32.esp32c3/ESP32_WiFi.ino.bin";
+const char* firmware_url = "https://micau183.github.io/esp32-gyro/ESP32_WiFi.ino.bin";
 
 const char* version_url  = "https://micau183.github.io/esp32-gyro/ESP32_WiFi/version.txt";
 
