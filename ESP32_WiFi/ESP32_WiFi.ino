@@ -110,7 +110,7 @@ BLYNK_WRITE(V1) { // Bouton sur le Virtual Pin V1
   }
 }
 
-BLYNK_WRITE(V3) { // Bouton sur le Virtual Pin V1
+BLYNK_WRITE(V3) { // Bouton sur le Virtual Pin V3
   int state = param.asInt();
 
   if (state == 1) { // Bouton activé
@@ -137,20 +137,20 @@ BLYNK_WRITE(V3) { // Bouton sur le Virtual Pin V1
     noTone(buzzerPin);
     delay(30);
 
-    tone(buzzerPin, 262); // do
-    delay(200);
-    noTone(buzzerPin);
-    delay(30);
+    // tone(buzzerPin, 262); // do
+    // delay(200);
+    // noTone(buzzerPin);
+    // delay(30);
 
-    tone(buzzerPin, 330); // mi
-    delay(200);
-    noTone(buzzerPin);
-    delay(30);
+    // tone(buzzerPin, 330); // mi
+    // delay(200);
+    // noTone(buzzerPin);
+    // delay(30);
 
-    tone(buzzerPin, 392); // sol
-    delay(400);
-    noTone(buzzerPin);
-    delay(30);
+    // tone(buzzerPin, 392); // sol
+    // delay(400);
+    // noTone(buzzerPin);
+    // delay(30);
 
     digitalWrite(relayPin, LOW);
 
