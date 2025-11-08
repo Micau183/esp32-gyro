@@ -67,7 +67,7 @@ const int relayPin = 8;
 // Tonalités et durée
 const int tone1 = 1000;      // Hz
 const int tone2 = 1500;      // Hz
-const int toneDuration = 550; // ms
+const int toneDuration = 450; // ms
 
 BLYNK_WRITE(V1) { // Bouton sur le Virtual Pin V1
   int state = param.asInt();
