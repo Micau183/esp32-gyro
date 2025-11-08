@@ -30,35 +30,29 @@ jobs:
       - name: Install libraries
         run: |
           arduino-cli lib install "Blynk"
-          # Ajouter d'autres libs si nécessaire
 
-      # 5️⃣ Compiler le sketch
+      # 5️⃣ Compiler le sketch et mettre le .bin dans build/
       - name: Compile sketch (ESP32-C3)
         run: |
           mkdir -p build
           arduino-cli compile --fqbn esp32:esp32:esp32c3 ESP32_WiFi/ESP32_WiFi.ino --output-dir build
+          # Copier directement le binaire avec un nom simple
+          cp build/**/*.bin build/ESP32_WiFi.bin
 
-      # 6️⃣ Copier le firmware dans un dossier simple
-      - name: Copy firmware to artifact folder
-        run: |
-          mkdir -p build_artifact
-          cp build/esp32:esp32:esp32c3/ESP32_WiFi.ino.bin build_artifact/
-
-      # 7️⃣ Upload firmware en artifact
+      # 6️⃣ Upload firmware en artifact
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
           name: esp32-firmware
-          path: build_artifact/ESP32_WiFi.ino.bin
+          path: build/ESP32_WiFi.bin
 
-      # 8️⃣ Préparer le dossier pour GitHub Pages
+      # 7️⃣ Préparer le dossier pour GitHub Pages
       - name: Prepare build_root for GitHub Pages
         run: |
           mkdir -p build_root
-          cp build_artifact/ESP32_WiFi.ino.bin build_root/
-          # Tu peux ajouter d'autres fichiers du site ici si besoin
+          cp build/ESP32_WiFi.bin build_root/
 
-      # 9️⃣ Déployer sur GitHub Pages
+      # 8️⃣ Déployer sur GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
