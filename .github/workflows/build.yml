@@ -44,7 +44,7 @@ jobs:
       # 7️⃣ Préparer build_root pour Pages
       - run: |
           mkdir -p build_root
-          find build -name "*.bin" -exec cp {} build_root/ \;
+          cp -r build/* build_root/
 
       # 8️⃣ Déployer sur GitHub Pages
       - uses: peaceiris/actions-gh-pages@v3
