@@ -196,6 +196,7 @@ BLYNK_WRITE(OTA_BUTTON) {
     Serial.println("OTA triggered from Blynk!");
     small_blink();
     checkForUpdate();
+    Serial.println("update ok");
     Blynk.virtualWrite(OTA_BUTTON, 0);
   }
 }
