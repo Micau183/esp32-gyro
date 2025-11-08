@@ -35,16 +35,17 @@ jobs:
           echo "Contenu du build:"
           ls -R build
 
-      # 6️⃣ Upload firmware artifact (trouve tous les .bin avec find)
+      # 6️⃣ Upload firmware artifact (tout le dossier build)
       - uses: actions/upload-artifact@v4
         with:
           name: esp32-firmware
-          path: ${{ github.workspace }}/build/$(find build -name "*.bin")
+          path: build
 
       # 7️⃣ Préparer build_root pour Pages
       - run: |
           mkdir -p build_root
           cp -r build/* build_root/
+
 
       # 8️⃣ Déployer sur GitHub Pages
       - uses: peaceiris/actions-gh-pages@v3
