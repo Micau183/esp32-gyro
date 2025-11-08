@@ -109,6 +109,55 @@ BLYNK_WRITE(V1) { // Bouton sur le Virtual Pin V1
     Blynk.virtualWrite(V1, 0);
   }
 }
+
+BLYNK_WRITE(V3) { // Bouton sur le Virtual Pin V1
+  int state = param.asInt();
+
+  if (state == 1) { // Bouton activé
+    digitalWrite(relayPin, HIGH);
+
+    // Exemple de mélodie : do ré mi ré do mi sol
+    tone(buzzerPin, 262); // do
+    delay(200);
+    noTone(buzzerPin);
+    delay(30);
+
+    tone(buzzerPin, 294); // ré
+    delay(200);
+    noTone(buzzerPin);
+    delay(30);
+
+    tone(buzzerPin, 330); // mi
+    delay(200);
+    noTone(buzzerPin);
+    delay(30);
+
+    tone(buzzerPin, 294); // ré
+    delay(200);
+    noTone(buzzerPin);
+    delay(30);
+
+    tone(buzzerPin, 262); // do
+    delay(200);
+    noTone(buzzerPin);
+    delay(30);
+
+    tone(buzzerPin, 330); // mi
+    delay(200);
+    noTone(buzzerPin);
+    delay(30);
+
+    tone(buzzerPin, 392); // sol
+    delay(400);
+    noTone(buzzerPin);
+    delay(30);
+
+    digitalWrite(relayPin, LOW);
+
+    // Remet le bouton à OFF pour pouvoir rejouer
+    Blynk.virtualWrite(V3, 0);
+  }
+}
 void small_blink(){
 
   digitalWrite(relayPin, HIGH);
