@@ -41,12 +41,10 @@ jobs:
       - name: List build folder
         run: ls -R build
 
-      # 7️⃣ Upload firmware en artifact (prend tous les .bin générés)
-      - name: Upload firmware artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: esp32-firmware
-          path: build/**/*.bin
+       # 7️⃣ Préparer build_root pour Pages
+      - run: |
+          mkdir -p build_root
+          find build -name "*.bin" -exec cp {} build_root/ \;
 
       # 8️⃣ Préparer le dossier pour GitHub Pages
       - name: Prepare build_root for GitHub Pages
