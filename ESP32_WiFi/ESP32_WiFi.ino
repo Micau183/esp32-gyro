@@ -47,7 +47,7 @@ char ssid[] = "Freebox-6D4814";
 char pass[] = "felicula.!-conbina7!-vestigant?-opposui";
 
 
-const char* firmware_url = "http://raw.githubusercontent.com/Micau183/esp32-gyro/gh-pages/ESP32_WiFi.ino.bin";
+const char* firmware_url = "https://raw.githubusercontent.com/Micau183/esp32-gyro/gh-pages/ESP32_WiFi.ino.bin";
 
 const char* version_url  = "https://micau183.github.io/esp32-gyro/ESP32_WiFi/version.txt";
 
@@ -182,6 +182,8 @@ void setup() {
   Serial.begin(9600);
   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
   Blynk.virtualWrite(OTA_BUTTON, 0);
+    // Activer le debug pour HTTPUpdate
+  Serial.setDebugOutput(true);
   big_blink();
 }
 
@@ -200,21 +202,34 @@ BLYNK_WRITE(OTA_BUTTON) {
     Blynk.virtualWrite(OTA_BUTTON, 0);
   }
 }
-
 void checkForUpdate() {
   Serial.println("Starting OTA update...");
   small_blink();
-  // WiFiClientSecure pour HTTPS
-  WiFiClientSecure client;
-  client.setInsecure(); // ok pour GitHub Pages, pas de vérification SSL stricte
 
+  WiFiClientSecure client;
+  client.setInsecure(); // ok pour GitHub Pages
+
+  // Test rapide de connexion et récupération du binaire (optionnel pour debug)
+  if (client.connect("username.github.io", 443)) {
+      Serial.println("Connected to server");
+      client.print(String("GET /repo/firmware.bin HTTP/1.1\r\n") +
+                   "Host: username.github.io\r\n" +
+                   "Connection: close\r\n\r\n");
+      delay(500);
+      while(client.available()) {
+          Serial.write(client.read());
+      }
+  } else {
+      Serial.println("Connection failed!");
+  }
+
+  // Appel OTA avec le même client
   t_httpUpdate_return ret = httpUpdate.update(client, firmware_url);
 
   switch(ret) {
     case HTTP_UPDATE_OK:
       big_blink();
       big_blink();
-      
       Serial.println("Update successful! ESP will reboot.");
       break;
     case HTTP_UPDATE_FAILED:
