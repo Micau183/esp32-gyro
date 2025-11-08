@@ -10,51 +10,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout du dépôt
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      # 1️⃣ Checkout
+      - uses: actions/checkout@v4
 
       # 2️⃣ Installer Arduino CLI
-      - name: Setup Arduino CLI
-        uses: arduino/setup-arduino-cli@v2
+      - uses: arduino/setup-arduino-cli@v2
         with:
           version: '0.34.0'
 
       # 3️⃣ Installer le core ESP32
-      - name: Install ESP32 core
-        run: |
+      - run: |
           arduino-cli core update-index
           arduino-cli core install esp32:esp32
 
       # 4️⃣ Installer les bibliothèques nécessaires
-      - name: Install libraries
-        run: |
-          arduino-cli lib install "Blynk"
+      - run: arduino-cli lib install "Blynk"
 
-      # 5️⃣ Compiler le sketch (ESP32-C3)
-      - name: Compile sketch
-        run: |
+      # 5️⃣ Compiler le sketch
+      - run: |
           mkdir -p build
           arduino-cli compile --fqbn esp32:esp32:esp32c3 ESP32_WiFi/ESP32_WiFi.ino --output-dir build
+          echo "Contenu du build:"
+          ls -R build
 
-      # 6️⃣ Lister le contenu du build pour debug
-      - name: List build folder
-        run: ls -R build
+      # 6️⃣ Upload firmware artifact (trouve tous les .bin avec find)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: esp32-firmware
+          path: ${{ github.workspace }}/build/$(find build -name "*.bin")
 
-       # 7️⃣ Préparer build_root pour Pages
+      # 7️⃣ Préparer build_root pour Pages
       - run: |
           mkdir -p build_root
           find build -name "*.bin" -exec cp {} build_root/ \;
 
-      # 8️⃣ Préparer le dossier pour GitHub Pages
-      - name: Prepare build_root for GitHub Pages
-        run: |
-          mkdir -p build_root
-          cp build/**/*.bin build_root/
-
-      # 9️⃣ Déployer sur GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      # 8️⃣ Déployer sur GitHub Pages
+      - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build_root
