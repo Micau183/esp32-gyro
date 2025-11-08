@@ -67,7 +67,7 @@ const int relayPin = 8;
 // Tonalités et durée
 const int tone1 = 1000;      // Hz
 const int tone2 = 1500;      // Hz
-const int toneDuration = 150; // ms
+const int toneDuration = 450; // ms
 
 BLYNK_WRITE(V1) { // Bouton sur le Virtual Pin V1
   int state = param.asInt();
@@ -209,20 +209,6 @@ void checkForUpdate() {
   WiFiClientSecure client;
   client.setInsecure(); // ok pour GitHub Pages
 
-  // Test rapide de connexion et récupération du binaire (optionnel pour debug)
-  if (client.connect("username.github.io", 443)) {
-      Serial.println("Connected to server");
-      client.print(String("GET /repo/firmware.bin HTTP/1.1\r\n") +
-                   "Host: username.github.io\r\n" +
-                   "Connection: close\r\n\r\n");
-      delay(500);
-      while(client.available()) {
-          Serial.write(client.read());
-      }
-  } else {
-      Serial.println("Connection failed!");
-  }
-
   // Appel OTA avec le même client
   t_httpUpdate_return ret = httpUpdate.update(client, firmware_url);
 
@@ -231,6 +217,7 @@ void checkForUpdate() {
       big_blink();
       big_blink();
       Serial.println("Update successful! ESP will reboot.");
+      ESP.restart();
       break;
     case HTTP_UPDATE_FAILED:
       small_blink();
