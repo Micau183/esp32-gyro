@@ -1,0 +1,46 @@
+name: Build ESP32 Test Sketch
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout du dépôt
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # 2️⃣ Installer Arduino CLI
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v2
+        with:
+          version: '0.34.0'
+
+      # 3️⃣ Installer le core ESP32
+      - name: Install ESP32 core
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install esp32:esp32
+
+      # 4️⃣ Compiler un sketch test
+      - name: Compile Test Sketch (ESP32-C3)
+        run: |
+          mkdir -p build
+          echo 'void setup() { } void loop() { }' > Test.ino
+          arduino-cli compile --fqbn esp32:esp32:esp32c3 Test.ino --output-dir build
+
+      # 5️⃣ Vérifier où le binaire est généré
+      - name: List build folder
+        run: |
+          ls -R build
+
+      # 6️⃣ Upload firmware en artifact
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: esp32-test-firmware
+          path: build/**/*.bin
