@@ -45,6 +45,8 @@ jobs:
       - run: |
           mkdir -p build_root
           cp -r build/* build_root/
+      - name: List build_root
+        run: ls -R build_root
 
 
       # 8️⃣ Déployer sur GitHub Pages
