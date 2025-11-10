@@ -183,7 +183,7 @@ void big_blink(){
     
 void connectWifi() {
   for (int i = 0; i < sizeof(ssids)/sizeof(ssids[0]); i++) {
-    Blynk.begin(auth, ssids[i], passwords[i]);
+    Blynk.begin(BLYNK_AUTH_TOKEN, ssids[i], passwords[i]);
     if (WiFi.status() == WL_CONNECTED) break;
     delay(200);
   }
