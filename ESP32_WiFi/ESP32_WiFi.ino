@@ -43,10 +43,9 @@
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-char ssid[] = "Freebox-6D4814faute";
-char pass[] = "felicula.!-conbina7!-vestigant?-opposui";
 
-char* ssids[] = {"Freebox-6D4814", "PixelLilian"};
+
+char* ssids[] = {"Freebox-6D4814faute", "PixelLilian"};
 char* passwords[] = {
   "felicula.!-conbina7!-vestigant?-opposui",
   "azerazer"
