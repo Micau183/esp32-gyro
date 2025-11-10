@@ -43,8 +43,14 @@
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-char ssid[] = "Freebox-6D4814";
+char ssid[] = "Freebox-6D4814faute";
 char pass[] = "felicula.!-conbina7!-vestigant?-opposui";
+
+char* ssids[] = {"Freebox-6D4814", "PixelLilian"};
+char* passwords[] = {
+  "felicula.!-conbina7!-vestigant?-opposui",
+  "azerazer"
+};
 
 
 const char* firmware_url = "https://raw.githubusercontent.com/Micau183/esp32-gyro/gh-pages/ESP32_WiFi.ino.bin";
@@ -175,12 +181,29 @@ void big_blink(){
 
 }
 
+void connectWifi(){
+  for (int i = 0; i < sizeof(ssids) / sizeof(ssids[0]); i++) {
+    Blynk.begin(auth, ssids[i], passwords[i]);
+    if (WiFi.status() == WL_CONNECTED) {
+      break;
+    }
+    
+void connectWifi() {
+  for (int i = 0; i < sizeof(ssids)/sizeof(ssids[0]); i++) {
+    Blynk.begin(auth, ssids[i], passwords[i]);
+    if (WiFi.status() == WL_CONNECTED) break;
+    delay(200);
+  }
+}
 void setup() {
   pinMode(buzzerPin, OUTPUT);
   pinMode(relayPin, OUTPUT);
   digitalWrite(relayPin, LOW);
   Serial.begin(9600);
-  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+
+  connectWifi();
+
+  
   Blynk.virtualWrite(OTA_BUTTON, 0);
     // Activer le debug pour HTTPUpdate
   Serial.setDebugOutput(true);
