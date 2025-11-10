@@ -73,7 +73,7 @@ const int relayPin = 8;
 // Tonalités et durée
 const int tone1 = 1000;      // Hz
 const int tone2 = 1500;      // Hz
-const int toneDuration = 450; // ms
+const int toneDuration = 150; // ms
 
 BLYNK_WRITE(V1) { // Bouton sur le Virtual Pin V1
   int state = param.asInt();
@@ -180,13 +180,6 @@ void big_blink(){
   delay(500);
 
 }
-
-void connectWifi(){
-  for (int i = 0; i < sizeof(ssids) / sizeof(ssids[0]); i++) {
-    Blynk.begin(auth, ssids[i], passwords[i]);
-    if (WiFi.status() == WL_CONNECTED) {
-      break;
-    }
     
 void connectWifi() {
   for (int i = 0; i < sizeof(ssids)/sizeof(ssids[0]); i++) {
