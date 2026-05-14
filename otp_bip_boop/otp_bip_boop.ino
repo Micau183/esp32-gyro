@@ -3,9 +3,10 @@
    Reprise de ton sketch avec provisioning WiFi dynamique
  *************************************************************/
 
+// Required by blynk
 #define BLYNK_TEMPLATE_ID           "TMPL57cB3JhFw"
 #define BLYNK_TEMPLATE_NAME         "gyro2"
-#define BLYNK_FIRMWARE_VERSION      "1.0.0"
+#define BLYNK_FIRMWARE_VERSION      "1.0.4"
 
 #define BLYNK_PRINT Serial
 #define APP_DEBUG
@@ -17,6 +18,7 @@
 #define OTA_BUTTON V2
 #define PLAY1_BUTTON V1
 #define PLAY2_BUTTON V3
+#define PLAY3_BUTTON V4
 
 BlynkTimer timer;
 
@@ -60,8 +62,10 @@ BLYNK_CONNECTED() {
   Blynk.virtualWrite(OTA_BUTTON, 0);
   Blynk.virtualWrite(PLAY1_BUTTON, 0);
   Blynk.virtualWrite(PLAY2_BUTTON, 0);
+  Blynk.virtualWrite(PLAY3_BUTTON, 0);
 }
 
+// Mcdo
 BLYNK_WRITE(PLAY1_BUTTON) {
   int state = param.asInt();
 
@@ -79,6 +83,7 @@ BLYNK_WRITE(PLAY1_BUTTON) {
   }
 }
 
+// Music
 BLYNK_WRITE(PLAY2_BUTTON) {
   int state = param.asInt();
 
@@ -95,6 +100,25 @@ BLYNK_WRITE(PLAY2_BUTTON) {
 
     digitalWrite(relayPin, LOW);
     Blynk.virtualWrite(PLAY2_BUTTON, 0);
+  }
+}
+
+// Urgences
+BLYNK_WRITE(PLAY3_BUTTON) {
+  int state = param.asInt();
+
+  if (state == 1) {
+    digitalWrite(relayPin, HIGH);
+
+    playTone(435, 600, 20);  // Ton grave
+    playTone(580, 600, 20);  // Ton aigu
+    playTone(435, 600, 20);  // Ton grave
+    playTone(580, 600, 20);  // Ton aigu
+    playTone(435, 600, 20);  // Ton grave
+    playTone(580, 600, 20);  // Ton aigu
+
+    digitalWrite(relayPin, LOW);
+    Blynk.virtualWrite(PLAY3_BUTTON, 0);
   }
 }
 
